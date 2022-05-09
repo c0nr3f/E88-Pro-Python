@@ -12,3 +12,6 @@ This script will process the mjpeg-like stream and modifys it until it can be di
 ```
 video.bind(("192.168.4.100", 19797))
 ```
+
+# License
+Licensed under MIT License. 
