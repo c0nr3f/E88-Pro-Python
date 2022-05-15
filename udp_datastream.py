@@ -48,5 +48,4 @@ try:
             
 finally:
     print('closing socket')
-    video.close()
     command.close()
