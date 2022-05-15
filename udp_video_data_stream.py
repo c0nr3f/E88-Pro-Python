@@ -15,9 +15,16 @@ video.bind(("192.168.4.100", 19797))
 # The message 'Bv' will start the video stream from the drone
 video_start_message = str.encode('Bv')
 video.sendto(video_start_message, video_address)
-packet_data = bytearray()
 
-try:
+# The message 'By' will change the video input source
+# switch_camera_message = str.encode('By')
+# video.sendto(switch_camera_message, video_address)
+
+def camera_feed():
+    face_cascade = cv2.CascadeClassifier('C:/Users/sasko/AppData/Roaming/Python/Python39/site-packages/cv2/data/haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier('C:/Users/sasko/AppData/Roaming/Python/Python39/site-packages/cv2/data/haarcascade_eye.xml')
+    packet_data = bytearray()
+
     while(True):
         data, server = video.recvfrom(2048)
         
@@ -45,7 +52,20 @@ try:
                 try:
                     img = np.array(Image.open(buf))
                     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+                    # Haar Cascade to Detect Face and Eyes
+                    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+                    for (x,y,w,h) in faces:
+                        img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+                        roi_gray = gray[y:y+h, x:x+w]
+                        roi_color = img[y:y+h, x:x+w]
+                        eyes = eye_cascade.detectMultiScale(roi_gray)
+                        for (ex,ey,ew,eh) in eyes:
+                            cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+
                     cv2.imshow('Drone Camera', img)
+                    
                 except:
                     pass
                 
@@ -58,6 +78,10 @@ try:
                 break
             else:
                 continue
+
+
+try:
+    camera_feed()
 
 finally:
     video.close()
