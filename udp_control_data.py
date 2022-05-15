@@ -7,9 +7,21 @@ command_address = ("192.168.4.153", 8090)
 command = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 command.bind(("192.168.4.100", 19097))
 
-# Common codes
-# 6680808080000099 -> No input from user
-# aa80800080008055 -> Heartbeat        
+# Insights into the used communication protocol:
+# The controller basically sends bytes in hex format to the drone, telling it what to do. Meaning of the bytes:
+
+# Byte 0: start byte, always 66
+# Byte 1: controls the yaw (z axis rotation), from 01 (left) to fe (right)
+# Byte 2: controls the pitch (y axis rotation), from 01 (left) to fe (right)
+# Byte 3: controls the thrust (z axis translation), from 01 (left) to fe (right)
+# Byte 4: controls the roll (x axis rotation), from 01 (left) to fe (right)
+# Byte 5: (probably) no function, always 00
+# Byte 6: not figured out yet
+# Byte 7: end byte, always 99
+
+# Some common codes
+# 6680808080000099 -> No input from user, neutral position
+# aa80800080008055 -> Heartbeat       
 
 def on_press(key):
     try:
@@ -19,7 +31,7 @@ def on_press(key):
         
         # The arrow keys will result in an attribute error, catch that properly to continue
     except AttributeError:
-        # The controller expects a joystick like input, so you cant simply raise the motor speed from hex 80 to hex ff, 
+        # The controller expects an analog input, so you cant simply raise the motor speed from hex 80 to hex ff, 
         # you must provide some kind of incrementing numbers. This will be redone, just for testing the functionality.
         
         if key == keyboard.Key.up:
