@@ -3,7 +3,7 @@ Repository with python scripts to gather data and control an E88 pro drone. It d
 
 # Installation
 ```
-pip install opencv-python socket Pillow numpy
+pip install opencv-python socket Pillow numpy pynput
 ```
 
 # Scripts
@@ -13,6 +13,9 @@ This script will process the mjpeg-like stream and modifys it until it can be di
 video.bind(("192.168.4.100", 19797))
 ```
 The script now includes Haar Cascade Classifier, to find eyes and faces of persons in the live video feed.
+
+## udp_video_data.py
+This script tries to control the drone via keyboard. Not fully operational yet.
 
 # License
 Licensed under MIT License. 
